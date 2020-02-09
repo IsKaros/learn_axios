@@ -41,7 +41,8 @@
   ],
   "dependencies": {
     "follow-redirects": "1.5.10",
-    "is-buffer": "^2.0.2"
+    "is-buffer": "^2.0.2",
+    "mddir": "^1.1.1"
   },
   "deprecated": false,
   "description": "Promise based HTTP client for the browser and node.js",

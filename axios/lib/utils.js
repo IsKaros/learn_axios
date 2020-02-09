@@ -252,12 +252,23 @@ function forEach(obj, fn) {
  * @param {Object} obj1 Object to merge
  * @returns {Object} Result of all merge properties
  */
+var obj1 = {
+  key:'111',
+  agent:{
+    name:'chrome',
+    developer:'google',
+    version:'79.0'
+  }
+}
 function merge(/* obj1, obj2, obj3, ... */) {
   var result = {};
   function assignValue(val, key) {
+    // 如果result[key]已存在且为对象，同时后来相同的key的对应的值也为对象类型
+    // 那就递归merge,但是后来的会覆盖前面的
     if (typeof result[key] === 'object' && typeof val === 'object') {
       result[key] = merge(result[key], val);
     } else {
+      // 如果上面条件不成立，那么就直接赋值
       result[key] = val;
     }
   }
