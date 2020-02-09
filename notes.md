@@ -95,9 +95,33 @@ dist目录是打包后的结果，源码的部分只要看lib文件夹就可以�
 
 以下顺序省略lib文件夹
 
-1.axios.js -> util.js -> helpers/bind.js
+1.core/axios.js -> util.js -> helpers/bind.js
 
 2.helpers/bind.js -> util.js
+
+3.core/axios ->  helpers/buildURL.js
+
+4.core/axios -> core/interceptorManage.js
+
+5.core/axios -> core/dispatchRequest.js
+
+6.core/dispatchRequest.js -> core/transformData.js
+
+7.core/dispatchRequest.js -> cancel/isCancel.js
+
+8.core/dispatchRequest.js -> default.js
+
+9.defaults.js -> helpers/normalizeHeaderName.js
+
+10.default.js -> adapters/http.js
+
+11.default.js -> adapters/xhr.js
+
+12.adapter/xhr.js -> core/settle.js
+
+13.core/settle.js -> core/createError.js
+
+14.core/createError -> helpers/enhanceError.js
 
 ## bind.js
 
@@ -341,9 +365,133 @@ IE全都不兼容,Edge要17及以上，其他浏览器高版本都支持。
 
 不行，因为assignValue函数需要用到merge/deepMerge中的变量result。单独拿出来改写函数，反而麻烦。
 
+5.forEach函数中，为什么要用到`Object.prototype.hasOwnProperty`?
+
+## buildURL.js
+
+构建完整的URL
+
+### encode
+
+![buildURL-encode](D:\learn\learn_axios\pictures\buildURL-encode.png)
 
 
 
+encode函数模拟浏览器对URL进行解析的过程。
 
++ 先用encodeURIComponen()对URL进行编码
++ 除此之外，浏览器还对部分字符进行了转换
 
+### buildURL(url, params, paramsSerializer)
+
+ @param {string} url The base of the url (e.g., http://www.google.com)
+
+ @param {object} [params] The params to be appended
+
+ @returns {string} The formatted url
+
+![](D:\learn\learn_axios\pictures\buildURL.png)
+
+**params是一个对象**。
+
++ 如果没有传入参数,直接return
+
++ 如果传入了参数序列化函数，那么使用该函数序列化参数
+
++ 如果参数是一个URLSearchParams类型的对象，那么直接`toString`
+
+如果 2，3都不满足，那么对参数进行如下处理
+
+1.如`a=abc&b=[1,2,3]` ->`a=[abc]&b[]=[1,2,3]`,然后遍历
+
+2.如果`value`是Date对象，转成ISO字符串
+
+3.如果`value`是对象，就`JSON.stringfy()`
+
+4.encode(key) +''=''+encode(val),push进临时的数组，再将临时的数组`join`拼接
+
+![](D:\learn\learn_axios\pictures\buildUrl-2.png)
+
++ 再对url中的`#`和`?`做相应的处理
+
+总体思路，获取正确url和params
+
++ 对于params，要做一些参数类型的验证和处理（Date,URlSearchParams）。
++ 对于url,`#`,`?`,`&`这几个符号要做一些处理
+
+## interceptorManager
+
+拦截器的管理类
+
+InterceptorManage类只有handlers数组
+
+### use 
+
+注册拦截器
+
+![](D:\learn\learn_axios\pictures\interceptorManage-use.png)
+
+### eject 
+
+删除拦截器
+
+![](D:\learn\learn_axios\pictures\interceptorManage-eject.png)
+
+### forEach
+
+ 遍历所有的拦截器
+
+![](D:\learn\learn_axios\pictures\interceptorManage-forEach.png)
+
+##  transformData
+
+转换数据的函数，可用于请求/响应的数据
+
+![](D:\learn\learn_axios\pictures\transformData.png)
+
+## normalizeHeaderName(header,normalizedName)
+
+规范化所有Header里面的字段名称
+
+![](D:\learn\learn_axios\pictures\normalizeHeaderName.png)
+
++ 参数1：header
++ 参数2：已经规范化过的字段名称
+
+思路：
+
+`forEach`遍历整个header对象，如果找到一个字段，名字和规范不一致，但是两者转大写之后又一致，那么将原来名称所对应的值覆盖新字段(规范化的字段)，并删除原来的字段。
+
+## http.js
+
+用于适配node环境的adapter。
+
+axios是基于promise的，客户端还是node端，就是返回一个promise。
+
+### 重写resolve/reject函数
+
+![](D:\learn\learn_axios\pictures\rewrite-promiseCallback.png)
+
+装饰器模式的体现
+
+## createError.js enhanceError.js
+
++ createError :封装一个Error对象。
++ enhanceError: 增加一个Error对象
+
+![](D:\learn\learn_axios\pictures\createError.png)
+
+![](D:\learn\learn_axios\pictures\enhanceError.png)
+
+### 思考
+
+1.这样写有什么好处，因为enhanceError的内容其实也可以写在createError里面
+
+这样写，分开来，各自做各自的事，createError只做一件事，创建一个Error对象，而EnhanceError则增强该对象，互不干扰，任务更细化，解耦合。
+
+2.enhance为什么要给error对象添加toJSON方法
+
+有助于更清楚报错内容，而不是只有报错信息
+
+## settle.js
 

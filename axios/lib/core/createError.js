@@ -1,3 +1,12 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-07 17:41:36
+ * @LastEditTime: 2020-02-09 17:37:45
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \axios\lib\core\createError.js
+ */
+
 'use strict';
 
 var enhanceError = require('./enhanceError');

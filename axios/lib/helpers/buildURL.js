@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-07 17:41:36
+ * @LastEditTime : 2020-02-09 11:37:10
+ * @LastEditors  : Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \axios\lib\helpers\buildURL.js
+ */
 'use strict';
 
 var utils = require('./../utils');
@@ -6,13 +14,13 @@ function encode(val) {
   // 浏览器会默认调用encodeURIComponent对URI进行编码，
   // 直接encode在把有用的字符replace成原来的字符
   return encodeURIComponent(val).
-    replace(/%40/gi, '@').
-    replace(/%3A/gi, ':').
-    replace(/%24/g, '$').
-    replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
+  replace(/%40/gi, '@').
+  replace(/%3A/gi, ':').
+  replace(/%24/g, '$').
+  replace(/%2C/gi, ',').
+  replace(/%20/g, '+').
+  replace(/%5B/gi, '[').
+  replace(/%5D/gi, ']');
 }
 
 /**
@@ -67,7 +75,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
   if (serializedParams) {
     var hashmarkIndex = url.indexOf('#');
-    // 如果序列化之后的参数里包含‘#’，那么删除前面url开头到#中间的内容
+    // 如果url里包含‘#’，那么删除前面url开头到#中间的内容
     if (hashmarkIndex !== -1) {
       url = url.slice(0, hashmarkIndex);
     }
