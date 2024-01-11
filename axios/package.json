@@ -40,7 +40,7 @@
     }
   ],
   "dependencies": {
-    "follow-redirects": "1.5.10",
+    "follow-redirects": "1.15.4",
     "is-buffer": "^2.0.2",
     "mddir": "^1.1.1"
   },
